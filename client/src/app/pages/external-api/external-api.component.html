@@ -1,0 +1,25 @@
+<div class="container mt-5">
+  <h1>Server API</h1>
+  
+  <div *ngIf="hasApiError" class="alert alert-danger" role="alert">
+    An error occured when trying to call the local API on port 3001. Ensure the local API is started using either `npm run dev` or `npm run
+    server:api`.
+  </div>
+
+  <div *ngIf="isForbidden && auth.user$ | async as user" >
+    <p class="mb-5" class="alert alert-danger" role="alert">
+      Your email is not verified. Your registered email-address is {{user.email}}. Confirm your email-address by clicking the button below.
+    </p>
+    <button class="btn btn-primary mb-5" [disabled]="!audience" (click)="verifyEmail(user.sub, true)" > Submit </button>
+  </div>
+
+
+  <div class="result-block-container" *ngIf="responseJson">
+    <div class="result-block" [ngClass]="{ show: !!responseJson }">
+      <h6 class="muted">Result</h6>
+      <pre>
+        <code class="js rounded" [highlight]="responseJson"></code>
+      </pre>
+    </div>
+  </div>
+</div>
