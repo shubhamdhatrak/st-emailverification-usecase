@@ -1,6 +1,6 @@
 # Email verification use-case with SPA + API (Auth0)
 
-This sample app demonstrates some of the Auth0 related use-cases for SPA + API application. Client application is developed using Angular CLI 8 and integrated with [Auth0 Angular SDK](https://github.com/auth0/auth0-angular)  for authentication.
+This sample app demonstrates some of the Auth0 related use-cases for SPA + API application. Client application is developed using Angular CLI 8 and integrated with [Auth0 Angular SDK](https://github.com/auth0/auth0-angular)  for authentication. Backend application is developed with Java 11 and integerated with Spring Security. 
 
 This sample demonstrates the following use cases:
 
@@ -56,8 +56,12 @@ function (user, context, callback) {
 
 ```
 
-**Step 3** : Add logic in client which will show a popup/link to verify email-address if the current email-id is valid and correct without interupting application. 
+**Step 3** : Add logic in client which will show a popup/link to verify email-address if the current email-id is valid. 
+  Logic around how we can update email_verified flag in listed below : 
+  Solution 1 : Client will call backend API which internally willl call Auth0 update-users API to update `email_verified` flag to true. 
+  Solution 2 : Backend API can call Auth0's email-verification token API to get email-verification token link which we can open in new tab/popup once user's click 'Submit'. 
+  Solution 3 : We can directly send verification link to user's email-address with Auth0 API and only after post email-verification, user will be able to access application. 
 
-Add one more link in a scneario when user want's to change email-address.(Once confirmation on this link, user will have to re-login to application). This will only change the email-address and not primary key/primary identifier/username with which is user is trying to login. (Also currently Auth0 does not support multiple user's with same email-address, logic needs to handle same logic.)
+[Edge case scneario where user wants to update email-address before verification] : In this case, add one more link/button on client UI. Once user's clicks on this link/button, with the help of Auth0 API we can modify user's email and it will send out verification link over email. Since this affects the current Auth0's user session, user will have to re-login in order to access application. (Currently Auth0 does not support multiple users with same email-address, so user will have to enter unique email-address during update) 
 
-**Step 4** : Once user click on email-verification and `email_verified` flag gets updated in Auth0, we have to revoke current access token and will have to generate new access token with the available refresh-token. In case if refresh token is expired or if not present, application will redirect user to login to continue with work. 
+**Step 4** : Once user click on email-verification and `email_verified` flag gets updated in Auth0, we have to revoke current access token and will have to generate new access token with the available refresh-token. In case if refresh token is expired or if not present, application will redirect user to login to continue. 
